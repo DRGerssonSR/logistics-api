@@ -114,4 +114,4 @@ https://github.com/usuario/nombre-repo
 ## Autor
 
 Reto técnico desarrollado por:
-**[Tu nombre]**
+**Gersson Enrique Salazar Ramirez**
