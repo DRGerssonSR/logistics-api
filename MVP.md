@@ -87,25 +87,30 @@
      - Prevención de retrocesos y cambios desde DELIVERED
      - Actualización automática de updatedAt
 
+#### Fase 3: Módulo de Tracking (COMPLETADO)
+
+8. **✅ Como usuario o sistema de logística, quiero registrar eventos de seguimiento de un paquete (ubicación y estado) para mantener un historial detallado del envío.**
+   - **Estado:** ✅ Completado
+   - **Endpoints:** `POST /api/packages/:packageId/tracking`
+   - **Funcionalidades:**
+     - Registro de eventos de tracking con ubicación y estado
+     - Validación de existencia del paquete
+     - Validación de estado del paquete
+     - Notas opcionales en eventos
+     - Autorización: USER solo sus paquetes, ADMIN cualquier paquete
+
+9. **✅ Como usuario, quiero consultar el historial completo de un paquete para saber dónde ha estado y su estado actual.**
+   - **Estado:** ✅ Completado
+   - **Endpoints:** `GET /api/packages/:packageId/tracking`
+   - **Funcionalidades:**
+     - Consulta del historial completo de eventos de tracking
+     - Historial ordenado por fecha (más reciente primero)
+     - Validación de existencia del paquete
+     - Autorización: USER solo sus paquetes, ADMIN cualquier paquete
+
 ---
 
 ## 🚧 Historias de Usuario Pendientes
-
----
-
-### Fase 3: Módulo de Tracking (ALTA PRIORIDAD)
-
-#### 8. ⏳ Como usuario o sistema de logística, quiero registrar eventos de seguimiento de un paquete (ubicación y estado) para mantener un historial detallado del envío.
-   - **Prioridad:** 🔴 ALTA
-   - **Estado:** ⏳ Pendiente
-   - **Endpoint propuesto:** `POST /api/packages/:id/tracking`
-   - **Dependencias:** Módulo Tracking, Base de datos NoSQL
-
-#### 9. ⏳ Como usuario, quiero consultar el historial completo de un paquete para saber dónde ha estado y su estado actual.
-   - **Prioridad:** 🔴 ALTA
-   - **Estado:** ⏳ Pendiente
-   - **Endpoint propuesto:** `GET /api/packages/:id/tracking`
-   - **Dependencias:** Módulo Tracking
 
 ---
 
@@ -147,9 +152,9 @@
    - Modelos de datos para eventos de seguimiento
 
 3. **Swagger/OpenAPI**
-   - Configurar @nestjs/swagger
-   - Documentar todos los endpoints
-   - Agregar ejemplos de requests/responses
+   - ✅ Configurar @nestjs/swagger
+   - ✅ Documentar todos los endpoints
+   - ✅ Agregar ejemplos de requests/responses
 
 ### 🟡 Media Prioridad
 
@@ -238,14 +243,14 @@ GET    /api/packages/:id/tracking # Historial completo
 - [x] Autenticación y autorización
 - [x] Gestión de usuarios
 - [x] Gestión de paquetes
-- [ ] Sistema de tracking
-- [ ] Consulta de historial
+- [x] Sistema de tracking
+- [x] Consulta de historial
 
 ### Infraestructura
 - [ ] Base de datos SQL configurada
 - [ ] Base de datos NoSQL configurada
 - [ ] Docker y Docker Compose
-- [ ] Swagger/OpenAPI
+- [x] Swagger/OpenAPI
 - [ ] Tests básicos
 - [ ] Documentación completa
 
