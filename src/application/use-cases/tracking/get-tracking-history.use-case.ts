@@ -1,6 +1,8 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { PackageNotFoundError } from '../../../domain/errors/package-not-found.error';
+import { UnauthorizedPackageAccessError } from '../../../domain/errors/unauthorized-package-access.error';
 import { TrackingNotFoundError } from '../../../domain/errors/tracking-not-found.error';
+import { UserRole } from '../../../domain/value-objects/user-role.vo';
 import type { PackageRepositoryPort } from '../../../domain/ports/output/package.repository.port';
 import type { TrackingRepositoryPort } from '../../../domain/ports/output/tracking.repository.port';
 import type { GetTrackingHistoryResponse } from '../../dto/tracking/get-tracking-history.response';
@@ -17,11 +19,15 @@ export class GetTrackingHistoryUseCase {
 
   async execute(
     packageId: string,
+    user: { id: string; role: UserRole },
   ): Promise<GetTrackingHistoryResponse> {
-
     const packageEntity = await this.packageRepository.findById(packageId);
     if (!packageEntity) {
       throw new PackageNotFoundError(packageId);
+    }
+
+    if (user.role === UserRole.USER && packageEntity.userId !== user.id) {
+      throw new UnauthorizedPackageAccessError();
     }
 
     const trackings = await this.trackingRepository.findByPackageId(packageId);

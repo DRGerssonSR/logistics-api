@@ -20,9 +20,11 @@ import {
 import { CreateTrackingUseCase } from '../../application/use-cases/tracking/create-tracking.use-case';
 import { GetTrackingHistoryUseCase } from '../../application/use-cases/tracking/get-tracking-history.use-case';
 import { PackageNotFoundError } from '../../domain/errors/package-not-found.error';
+import { UnauthorizedPackageAccessError } from '../../domain/errors/unauthorized-package-access.error';
 import { TrackingNotFoundError } from '../../domain/errors/tracking-not-found.error';
 import { InvalidPackageStatusError } from '../../domain/errors/invalid-package-status.error';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
+import { CurrentUser } from '../decorators/current-user.decorator';
 import { CreateTrackingDto } from '../dto/tracking/create-tracking.dto';
 
 @ApiTags('tracking')
@@ -48,21 +50,30 @@ export class TrackingController {
     description: 'Evento de tracking creado exitosamente',
   })
   @ApiResponse({ status: 400, description: 'Datos inválidos' })
+  @ApiResponse({ status: 403, description: 'No autorizado para crear tracking de este paquete' })
   @ApiResponse({ status: 404, description: 'Paquete no encontrado' })
   async create(
     @Param('packageId') packageId: string,
     @Body() dto: CreateTrackingDto,
+    @CurrentUser() user: any,
   ) {
     try {
-      const tracking = await this.createTrackingUseCase.execute(packageId, {
-        location: dto.location,
-        status: dto.status,
-        notes: dto.notes,
-      });
+      const tracking = await this.createTrackingUseCase.execute(
+        packageId,
+        {
+          location: dto.location,
+          status: dto.status,
+          notes: dto.notes,
+        },
+        user,
+      );
       return tracking;
     } catch (error) {
       if (error instanceof PackageNotFoundError) {
         throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+      }
+      if (error instanceof UnauthorizedPackageAccessError) {
+        throw new HttpException(error.message, HttpStatus.FORBIDDEN);
       }
       if (error instanceof InvalidPackageStatusError) {
         throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
@@ -85,14 +96,24 @@ export class TrackingController {
     status: 200,
     description: 'Historial de tracking obtenido exitosamente',
   })
+  @ApiResponse({ status: 403, description: 'No autorizado para ver tracking de este paquete' })
   @ApiResponse({ status: 404, description: 'Paquete o historial no encontrado' })
-  async getHistory(@Param('packageId') packageId: string) {
+  async getHistory(
+    @Param('packageId') packageId: string,
+    @CurrentUser() user: any,
+  ) {
     try {
-      const history = await this.getTrackingHistoryUseCase.execute(packageId);
+      const history = await this.getTrackingHistoryUseCase.execute(
+        packageId,
+        user,
+      );
       return history;
     } catch (error) {
       if (error instanceof PackageNotFoundError) {
         throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+      }
+      if (error instanceof UnauthorizedPackageAccessError) {
+        throw new HttpException(error.message, HttpStatus.FORBIDDEN);
       }
       if (error instanceof TrackingNotFoundError) {
         throw new HttpException(error.message, HttpStatus.NOT_FOUND);
