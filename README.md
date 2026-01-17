@@ -240,33 +240,64 @@ curl -X GET http://localhost:3000/api/v1/users \
 
 ## 🏗️ Arquitectura
 
-El proyecto implementa **Arquitectura Hexagonal** (Clean Architecture):
+El proyecto implementa **Arquitectura Hexagonal** (Clean Architecture) con organización **vertical modular** (feature-based):
 
 ```
 src/
-├── domain/                    # Capa de dominio (lógica de negocio)
-│   ├── entities/             # Entidades de dominio
-│   ├── value-objects/        # Objetos de valor
-│   ├── ports/                # Interfaces (puertos)
-│   └── errors/               # Errores de dominio
-├── application/              # Capa de aplicación (casos de uso)
-│   ├── use-cases/           # Casos de uso
-│   ├── dto/                 # DTOs de aplicación
-│   └── mappers/             # Mappers dominio ↔ dto
-├── infrastructure/           # Capa de infraestructura (adaptadores)
-│   ├── controllers/         # Controladores REST
-│   ├── persistence/         # Repositorios (SQL/NoSQL/In-Memory)
-│   ├── services/            # Servicios externos
-│   ├── guards/              # Guards de autorización
-│   └── filters/             # Filtros de excepciones
-└── modules/                  # Módulos de NestJS
+├── modules/                  # Módulos de negocio (estructura vertical)
+│   ├── auth/                # Módulo de autenticación
+│   │   ├── domain/          # Capa de dominio
+│   │   │   ├── errors/      # Errores específicos del módulo
+│   │   │   └── ports/       # Interfaces (puertos)
+│   │   ├── application/     # Capa de aplicación
+│   │   │   ├── use-cases/   # Casos de uso
+│   │   │   └── dto/         # DTOs de aplicación
+│   │   └── infrastructure/  # Capa de infraestructura
+│   │       ├── controllers/ # Controladores REST
+│   │       ├── dto/         # DTOs de infraestructura
+│   │       └── strategies/  # Estrategias (JWT, etc.)
+│   ├── packages/            # Módulo de paquetes
+│   │   ├── domain/
+│   │   │   ├── entities/    # Entidades de dominio
+│   │   │   ├── value-objects/ # Objetos de valor
+│   │   │   ├── ports/       # Interfaces de repositorio
+│   │   │   └── errors/      # Errores de dominio
+│   │   ├── application/
+│   │   │   ├── use-cases/   # Casos de uso
+│   │   │   ├── dto/         # DTOs de aplicación
+│   │   │   └── mappers/     # Mappers dominio ↔ dto
+│   │   └── infrastructure/
+│   │       ├── controllers/ # Controladores REST
+│   │       ├── persistence/ # Adaptadores de repositorio (SQL/NoSQL)
+│   │       └── dto/         # DTOs de infraestructura
+│   ├── users/               # Módulo de usuarios
+│   ├── tracking/            # Módulo de tracking
+│   └── ...
+├── shared/                   # Código compartido entre módulos
+│   ├── domain/              # Dominio compartido (ports comunes)
+│   └── infrastructure/      # Infraestructura compartida
+│       ├── guards/          # Guards de autorización
+│       ├── filters/         # Filtros de excepciones
+│       ├── interceptors/   # Interceptores
+│       └── services/        # Servicios compartidos
+└── app.module.ts            # Módulo raíz de NestJS
 ```
 
 ### Principios aplicados:
-- ✅ **Separación de responsabilidades**: Cada capa tiene su propósito
+- ✅ **Arquitectura Hexagonal**: Separación clara entre dominio, aplicación e infraestructura
+- ✅ **Estructura Vertical Modular**: Cada módulo es autónomo y contiene sus propias capas
+- ✅ **Separación de responsabilidades**: Cada capa tiene su propósito específico
 - ✅ **Inversión de dependencias**: El dominio no depende de la infraestructura
-- ✅ **Domain-Driven Design**: Entidades y value objects expresivos
-- ✅ **Ports & Adapters**: Interfaces para desacoplar capas
+- ✅ **Domain-Driven Design**: Entidades y value objects expresivos por módulo
+- ✅ **Ports & Adapters**: Interfaces para desacoplar capas y módulos
+- ✅ **Bounded Contexts**: Cada módulo representa un contexto delimitado del dominio
+
+### Ventajas de la estructura vertical:
+- 🎯 **Mejor encapsulación**: Cada módulo agrupa su lógica relacionada
+- 📈 **Escalabilidad**: Fácil agregar nuevos módulos sin afectar existentes
+- 🔍 **Mantenibilidad**: Código relacionado está junto, fácil de encontrar
+- 🧩 **Cohesión**: Alta cohesión dentro de cada módulo
+- 🔒 **Bajo acoplamiento**: Módulos independientes entre sí
 
 ---
 
@@ -353,10 +384,12 @@ Desde Swagger puedes:
 
 Este proyecto implementa las mejores prácticas de NestJS y Clean Architecture. Al contribuir:
 
-1. Mantén la separación de capas (domain, application, infrastructure)
-2. Usa DTOs para validación de datos
-3. Implementa tests unitarios para casos de uso
-4. Documenta endpoints en Swagger con decoradores
+1. **Organización modular**: Mantén la estructura vertical por módulos (domain, application, infrastructure dentro de cada módulo)
+2. **Separación de capas**: Respeta la separación entre dominio, aplicación e infraestructura dentro de cada módulo
+3. **DTOs**: Usa DTOs para validación de datos (application/dto para casos de uso, infrastructure/dto para controllers)
+4. **Tests**: Implementa tests unitarios para casos de uso y tests de integración para controllers
+5. **Documentación**: Documenta endpoints en Swagger con decoradores
+6. **Ports & Adapters**: Define puertos en domain/ports e implementa adaptadores en infrastructure/persistence
 
 ---
 

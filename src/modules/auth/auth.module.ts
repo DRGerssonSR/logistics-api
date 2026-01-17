@@ -2,13 +2,16 @@ import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { LoginUseCase } from '../../application/use-cases/auth/login.use-case';
-import { TokenGeneratorService } from '../../infrastructure/services/token-generator.service';
-import { AuthController } from '../../infrastructure/controllers/auth.controller';
-import { JwtStrategy } from '../../infrastructure/strategies/jwt.strategy';
+import { LoginUseCase } from './application/use-cases/login.use-case';
+import { AuthController } from './infrastructure/controllers/auth.controller';
+import { JwtStrategy } from './infrastructure/strategies/jwt.strategy';
+import { SharedModule } from '../../shared/shared.module';
+import { UsersModule } from '../users/users.module';
 
 @Module({
   imports: [
+    SharedModule,
+    UsersModule,
     PassportModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
@@ -28,10 +31,6 @@ import { JwtStrategy } from '../../infrastructure/strategies/jwt.strategy';
   providers: [
     LoginUseCase,
     JwtStrategy,
-    {
-      provide: 'TokenGeneratorPort',
-      useClass: TokenGeneratorService,
-    },
   ],
   exports: [LoginUseCase],
 })

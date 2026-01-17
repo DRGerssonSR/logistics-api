@@ -2,9 +2,9 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
-import { UsersSeed } from './infrastructure/seeds/users.seed';
-import { ResponseInterceptor } from './infrastructure/interceptors/response.interceptor';
-import { HttpExceptionFilter } from './infrastructure/filters/http-exception.filter';
+import { UsersSeed } from './modules/users/infrastructure/seeds/users.seed';
+import { ResponseInterceptor } from './shared/infrastructure/interceptors/response.interceptor';
+import { HttpExceptionFilter } from './shared/infrastructure/filters/http-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

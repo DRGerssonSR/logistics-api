@@ -2,15 +2,15 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { UserEntity } from '../../infrastructure/persistence/sql/entities/user.entity';
-import { PackageEntity } from '../../infrastructure/persistence/sql/entities/package.entity';
-import { UserRepositorySQLAdapter } from '../../infrastructure/persistence/sql/adapters/user.repository.sql.adapter';
-import { PackageRepositorySQLAdapter } from '../../infrastructure/persistence/sql/adapters/package.repository.sql.adapter';
+import { UserEntity } from '../users/infrastructure/persistence/user.entity.sql';
+import { PackageEntity } from '../packages/infrastructure/persistence/package.entity.sql';
+import { UserRepositorySQLAdapter } from '../users/infrastructure/persistence/user.repository.sql.adapter';
+import { PackageRepositorySQLAdapter } from '../packages/infrastructure/persistence/package.repository.sql.adapter';
 import {
   TrackingSchema,
   TrackingMongoSchema,
-} from '../../infrastructure/persistence/mongodb/schemas/tracking.schema';
-import { TrackingRepositoryMongoAdapter } from '../../infrastructure/persistence/mongodb/adapters/tracking.repository.mongo.adapter';
+} from '../tracking/infrastructure/persistence/tracking.schema';
+import { TrackingRepositoryMongoAdapter } from '../tracking/infrastructure/persistence/tracking.repository.mongo.adapter';
 
 @Module({
   imports: [
