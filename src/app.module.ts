@@ -4,6 +4,7 @@ import { SeedsModule } from './modules/seeds/seeds.module';
 import { SharedModule } from './modules/shared/shared.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { PackagesModule } from './modules/packages/packages.module';
+import { TrackingModule } from './modules/tracking/tracking.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { PackagesModule } from './modules/packages/packages.module';
     SeedsModule,
     AuthModule,
     PackagesModule,
+    TrackingModule,
   ],
   controllers: [],
   providers: [],

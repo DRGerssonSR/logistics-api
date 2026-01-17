@@ -25,6 +25,10 @@ import { SharedModule } from '../shared/shared.module';
     ListPackagesUseCase,
     GetPackageUseCase,
     UpdatePackageStatusUseCase,
+    {
+      provide: 'PackageRepositoryPort',
+      useClass: PackageRepositoryInMemoryAdapter,
+    },
   ],
 })
 export class PackagesModule {}
