@@ -4,6 +4,7 @@ import {
   Body,
   HttpException,
   HttpStatus,
+  HttpCode,
 } from '@nestjs/common';
 import { LoginUseCase } from '../../application/use-cases/auth/login.use-case';
 import { InvalidCredentialsError } from '../../domain/errors/invalid-credentials.error';
@@ -15,6 +16,7 @@ export class AuthController {
   constructor(private readonly loginUseCase: LoginUseCase) {}
 
   @Post('login')
+  @HttpCode(HttpStatus.OK)
   async login(@Body() dto: LoginDto) {
     try {
       const result = await this.loginUseCase.execute({

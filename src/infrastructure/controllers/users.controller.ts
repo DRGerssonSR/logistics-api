@@ -7,6 +7,7 @@ import {
   HttpException,
   HttpStatus,
   UseGuards,
+  HttpCode,
 } from '@nestjs/common';
 import { CreateUserUseCase } from '../../application/use-cases/users/create-user.use-case';
 import { ListUsersUseCase } from '../../application/use-cases/users/list-users.use-case';
@@ -28,6 +29,7 @@ export class UsersController {
   ) {}
 
   @Get()
+  @HttpCode(HttpStatus.OK)
   async findAll(@Query() query: ListUsersQueryDto) {
     try {
       const result = await this.listUsersUseCase.execute({
@@ -47,6 +49,7 @@ export class UsersController {
   @Post()
   @UseGuards(RolesGuard)
   @Roles(UserRole.ADMIN)
+  @HttpCode(HttpStatus.CREATED)
   async create(@Body() dto: CreateUserDto) {
     try {
       const user = await this.createUserUseCase.execute({

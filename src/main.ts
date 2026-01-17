@@ -2,6 +2,8 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { AppModule } from './app.module';
 import { UsersSeed } from './infrastructure/seeds/users.seed';
+import { ResponseInterceptor } from './infrastructure/interceptors/response.interceptor';
+import { HttpExceptionFilter } from './infrastructure/filters/http-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -13,6 +15,10 @@ async function bootstrap() {
       transform: true,
     }),
   );
+
+  // Formato estándar de respuestas
+  app.useGlobalInterceptors(new ResponseInterceptor());
+  app.useGlobalFilters(new HttpExceptionFilter());
 
   app.enableVersioning({
     type: VersioningType.URI,
