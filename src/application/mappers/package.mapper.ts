@@ -1,6 +1,9 @@
 import { Package } from '../../domain/entities/package.entity';
 import { PackageStatus } from '../../domain/value-objects/package-status.vo';
 import type { PackageDimensions } from '../../domain/entities/package.entity';
+import type { UserResponse } from './user.mapper';
+import { User } from '../../domain/entities/user.entity';
+import { UserMapper } from './user.mapper';
 
 export interface PackageResponse {
   id: string;
@@ -13,6 +16,7 @@ export interface PackageResponse {
   dimensions: PackageDimensions;
   createdAt: Date;
   updatedAt: Date;
+  owner?: UserResponse;
 }
 
 export class PackageMapper {
@@ -28,6 +32,16 @@ export class PackageMapper {
       dimensions: packageEntity.dimensions,
       createdAt: packageEntity.createdAt,
       updatedAt: packageEntity.updatedAt,
+    };
+  }
+
+  static toResponseWithOwner(
+    packageEntity: Package,
+    owner: User,
+  ): PackageResponse {
+    return {
+      ...this.toResponse(packageEntity),
+      owner: UserMapper.toResponse(owner),
     };
   }
 

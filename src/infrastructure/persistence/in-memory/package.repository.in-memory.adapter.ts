@@ -55,6 +55,25 @@ export class PackageRepositoryInMemoryAdapter
     };
   }
 
+  async findAll(params: PaginationParams): Promise<PaginatedResult<Package>> {
+    const { page, limit } = params;
+    const allPackages = Array.from(this.packages.values());
+
+    const total = allPackages.length;
+    const totalPages = Math.ceil(total / limit);
+    const skip = (page - 1) * limit;
+
+    const paginatedPackages = allPackages.slice(skip, skip + limit);
+
+    return {
+      data: paginatedPackages,
+      total,
+      page,
+      limit,
+      totalPages,
+    };
+  }
+
   async update(packageEntity: Package): Promise<Package> {
     this.packages.set(packageEntity.id, packageEntity);
     return packageEntity;

@@ -9,6 +9,7 @@ export interface PackageRepositoryPort {
     userId: string,
     params: PaginationParams,
   ): Promise<PaginatedResult<Package>>;
+  findAll(params: PaginationParams): Promise<PaginatedResult<Package>>;
   update(packageEntity: Package): Promise<Package>;
 }
 
