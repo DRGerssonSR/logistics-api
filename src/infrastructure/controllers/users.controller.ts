@@ -6,15 +6,21 @@ import {
   Query,
   HttpException,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import { CreateUserUseCase } from '../../application/use-cases/users/create-user.use-case';
 import { ListUsersUseCase } from '../../application/use-cases/users/list-users.use-case';
 import { UserAlreadyExistsError } from '../../domain/errors/user-already-exists.error';
 import { InvalidRoleError } from '../../domain/errors/invalid-role.error';
+import { UserRole } from '../../domain/value-objects/user-role.vo';
+import { JwtAuthGuard } from '../guards/jwt-auth.guard';
+import { RolesGuard } from '../guards/roles.guard';
+import { Roles } from '../decorators/roles.decorator';
 import { CreateUserDto } from '../dto/users/create-user.dto';
 import { ListUsersQueryDto } from '../dto/users/list-users-query.dto';
 
 @Controller('users')
+@UseGuards(JwtAuthGuard)
 export class UsersController {
   constructor(
     private readonly createUserUseCase: CreateUserUseCase,
@@ -39,6 +45,8 @@ export class UsersController {
   }
 
   @Post()
+  @UseGuards(RolesGuard)
+  @Roles(UserRole.ADMIN)
   async create(@Body() dto: CreateUserDto) {
     try {
       const user = await this.createUserUseCase.execute({
@@ -49,7 +57,7 @@ export class UsersController {
       });
 
       return user;
-    } catch (error: any) {
+    } catch (error) {
       if (error instanceof UserAlreadyExistsError) {
         throw new HttpException(
           error.message,
