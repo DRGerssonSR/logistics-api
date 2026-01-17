@@ -46,6 +46,9 @@
 - ✅ **Autenticación JWT** - Passport + JWT
 - ✅ **Guards y Roles** - Protección de rutas
 - ✅ **Seeder de usuarios** - Usuario admin inicial
+- ✅ **PostgreSQL** - Configurado con TypeORM para Users y Packages
+- ✅ **MongoDB** - Configurado con Mongoose para Tracking
+- ✅ **Swagger/OpenAPI** - Documentación completa de endpoints
 
 ---
 
@@ -116,14 +119,15 @@
 
 ### Fase 4: Infraestructura y DevOps (MEDIA PRIORIDAD)
 
-#### 10. ⏳ Como desarrollador, quiero desplegar la aplicación y las bases de datos en contenedores para facilitar la instalación, pruebas y escalabilidad.
+#### 10. 🔄 Como desarrollador, quiero desplegar la aplicación y las bases de datos en contenedores para facilitar la instalación, pruebas y escalabilidad.
    - **Prioridad:** 🟡 MEDIA
-   - **Estado:** ⏳ Pendiente
+   - **Estado:** 🔄 Parcialmente completado
    - **Tareas:**
-     - Dockerfile para la aplicación
-     - docker-compose.yml con PostgreSQL y MongoDB
-     - Configuración de variables de entorno
-   - **Dependencias:** Migración a bases de datos reales
+     - ✅ Bases de datos en Docker (PostgreSQL y MongoDB)
+     - ⏳ Dockerfile para la aplicación
+     - ⏳ docker-compose.yml completo con aplicación y bases de datos
+     - ✅ Configuración de variables de entorno
+   - **Nota:** Las bases de datos ya están configuradas en Docker, falta containerizar la aplicación
 
 #### 11. ⏳ Como administrador del sistema, quiero tener un script automatizado que haga copias de seguridad automáticas de las bases de datos para proteger los datos ante fallos.
    - **Prioridad:** 🟢 BAJA
@@ -141,15 +145,14 @@
 ### 🔴 Alta Prioridad
 
 1. **Base de Datos SQL (PostgreSQL/MySQL)**
-   - Migrar de in-memory a SQL real
-   - Configurar TypeORM o Prisma
-   - Migraciones de base de datos
-   - Repositorio SQL para Users y Packages
+   - ✅ Migrar de in-memory a SQL real
+   - ✅ Configurar TypeORM
+   - ✅ Repositorio SQL para Users y Packages
 
 2. **Base de Datos NoSQL (MongoDB)**
-   - Configurar MongoDB
-   - Repositorio NoSQL para Tracking
-   - Modelos de datos para eventos de seguimiento
+   - ✅ Configurar MongoDB
+   - ✅ Repositorio NoSQL para Tracking
+   - ✅ Modelos de datos para eventos de seguimiento
 
 3. **Swagger/OpenAPI**
    - ✅ Configurar @nestjs/swagger
@@ -183,7 +186,7 @@
 ### Prioridad ALTA (MVP Core)
 - **Criterio:** Funcionalidades esenciales para que el sistema sea funcional
 - **Historias:** Packages y Tracking (core del negocio)
-- **Técnicos:** Bases de datos reales, Swagger
+- **Técnicos:** ✅ Bases de datos reales (PostgreSQL y MongoDB), ✅ Swagger
 
 ### Prioridad MEDIA (MVP Completo)
 - **Criterio:** Mejoran la experiencia pero no bloquean el MVP
@@ -247,9 +250,9 @@ GET    /api/packages/:id/tracking # Historial completo
 - [x] Consulta de historial
 
 ### Infraestructura
-- [ ] Base de datos SQL configurada
-- [ ] Base de datos NoSQL configurada
-- [ ] Docker y Docker Compose
+- [x] Base de datos SQL configurada (PostgreSQL)
+- [x] Base de datos NoSQL configurada (MongoDB)
+- [ ] Docker y Docker Compose (parcial: bases de datos en Docker, falta Dockerfile para app)
 - [x] Swagger/OpenAPI
 - [ ] Tests básicos
 - [ ] Documentación completa
