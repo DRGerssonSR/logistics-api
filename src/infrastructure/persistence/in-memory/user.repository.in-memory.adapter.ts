@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { User } from '../../../domain/entities/user.entity';
+import type { UserRepositoryPort } from '../../../domain/ports/output/user.repository.port';
 import type {
-  UserRepositoryPort,
   PaginationParams,
   PaginatedResult,
-} from '../../../domain/ports/output/user.repository.port';
+} from '../../../domain/common/pagination';
 
 @Injectable()
 export class UserRepositoryInMemoryAdapter implements UserRepositoryPort {
