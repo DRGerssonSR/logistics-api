@@ -11,6 +11,15 @@ import {
   UseGuards,
   HttpCode,
 } from '@nestjs/common';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBody,
+  ApiParam,
+  ApiQuery,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { CreatePackageUseCase } from '../../application/use-cases/packages/create-package.use-case';
 import { ListPackagesUseCase } from '../../application/use-cases/packages/list-packages.use-case';
 import { GetPackageUseCase } from '../../application/use-cases/packages/get-package.use-case';
@@ -29,6 +38,8 @@ import { CreatePackageDto } from '../dto/packages/create-package.dto';
 import { ListPackagesQueryDto } from '../dto/packages/list-packages-query.dto';
 import { UpdatePackageStatusDto } from '../dto/packages/update-package-status.dto';
 
+@ApiTags('packages')
+@ApiBearerAuth('JWT-auth')
 @Controller('packages')
 @UseGuards(JwtAuthGuard)
 export class PackagesController {
@@ -41,6 +52,16 @@ export class PackagesController {
 
   @Get()
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Listar paquetes',
+    description: 'Obtiene una lista paginada de paquetes. USER ve solo sus paquetes, ADMIN ve todos',
+  })
+  @ApiQuery({ name: 'page', required: false, type: Number, example: 1 })
+  @ApiQuery({ name: 'limit', required: false, type: Number, example: 10 })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista de paquetes obtenida exitosamente',
+  })
   async findAll(
     @Query() query: ListPackagesQueryDto,
     @CurrentUser() user: any,
@@ -64,6 +85,17 @@ export class PackagesController {
 
   @Get(':id')
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Obtener paquete por ID',
+    description: 'Obtiene los datos de un paquete específico con información del propietario',
+  })
+  @ApiParam({ name: 'id', description: 'ID del paquete', type: String })
+  @ApiResponse({
+    status: 200,
+    description: 'Paquete encontrado',
+  })
+  @ApiResponse({ status: 404, description: 'Paquete no encontrado' })
+  @ApiResponse({ status: 403, description: 'No autorizado para ver este paquete' })
   async findOne(
     @Param('id') id: string,
     @CurrentUser() user: any,
@@ -90,6 +122,17 @@ export class PackagesController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({
+    summary: 'Crear paquete',
+    description: 'Registra un nuevo paquete con tracking number único',
+  })
+  @ApiBody({ type: CreatePackageDto })
+  @ApiResponse({
+    status: 201,
+    description: 'Paquete creado exitosamente',
+  })
+  @ApiResponse({ status: 400, description: 'Datos inválidos' })
+  @ApiResponse({ status: 404, description: 'Usuario no encontrado' })
   async create(
     @Body() dto: CreatePackageDto,
     @CurrentUser() user: any,
@@ -128,6 +171,19 @@ export class PackagesController {
   @UseGuards(RolesGuard)
   @Roles(UserRole.ADMIN)
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Actualizar estado del paquete',
+    description: 'Actualiza el estado de un paquete. Solo ADMIN. Transiciones válidas: PENDING → IN_TRANSIT → DELIVERED',
+  })
+  @ApiParam({ name: 'id', description: 'ID del paquete', type: String })
+  @ApiBody({ type: UpdatePackageStatusDto })
+  @ApiResponse({
+    status: 200,
+    description: 'Estado del paquete actualizado exitosamente',
+  })
+  @ApiResponse({ status: 400, description: 'Transición de estado inválida' })
+  @ApiResponse({ status: 404, description: 'Paquete no encontrado' })
+  @ApiResponse({ status: 403, description: 'No autorizado (solo ADMIN)' })
   async updateStatus(
     @Param('id') id: string,
     @Body() dto: UpdatePackageStatusDto,

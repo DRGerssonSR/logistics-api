@@ -1,5 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe, VersioningType } from '@nestjs/common';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { UsersSeed } from './infrastructure/seeds/users.seed';
 import { ResponseInterceptor } from './infrastructure/interceptors/response.interceptor';
@@ -26,6 +27,34 @@ async function bootstrap() {
   });
 
   app.setGlobalPrefix('api');
+
+  // Swagger
+  const config = new DocumentBuilder()
+    .setTitle('Logistics API')
+    .setDescription('API REST para gestión de logística y seguimiento de paquetes')
+    .setVersion('1.0')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'JWT',
+        description: 'Enter JWT token',
+        in: 'header',
+      },
+      'JWT-auth',
+    )
+    .addTag('auth', 'Endpoints de autenticación')
+    .addTag('users', 'Gestión de usuarios')
+    .addTag('packages', 'Gestión de paquetes')
+    .build();
+
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api/docs', app, document, {
+    swaggerOptions: {
+      persistAuthorization: true,
+    },
+  });
 
   // Ejecutar seeders
   const usersSeed = app.get(UsersSeed);

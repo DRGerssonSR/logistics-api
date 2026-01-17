@@ -10,6 +10,15 @@ import {
   UseGuards,
   HttpCode,
 } from '@nestjs/common';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBody,
+  ApiParam,
+  ApiQuery,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { CreateUserUseCase } from '../../application/use-cases/users/create-user.use-case';
 import { ListUsersUseCase } from '../../application/use-cases/users/list-users.use-case';
 import { GetUserUseCase } from '../../application/use-cases/users/get-user.use-case';
@@ -24,6 +33,8 @@ import { Roles } from '../decorators/roles.decorator';
 import { CreateUserDto } from '../dto/users/create-user.dto';
 import { ListUsersQueryDto } from '../dto/users/list-users-query.dto';
 
+@ApiTags('users')
+@ApiBearerAuth('JWT-auth')
 @Controller('users')
 @UseGuards(JwtAuthGuard)
 export class UsersController {
@@ -35,6 +46,13 @@ export class UsersController {
 
   @Get()
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Listar usuarios', description: 'Obtiene una lista paginada de usuarios' })
+  @ApiQuery({ name: 'page', required: false, type: Number, example: 1 })
+  @ApiQuery({ name: 'limit', required: false, type: Number, example: 10 })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista de usuarios obtenida exitosamente',
+  })
   async findAll(@Query() query: ListUsersQueryDto) {
     try {
       const result = await this.listUsersUseCase.execute({
@@ -53,6 +71,13 @@ export class UsersController {
 
   @Get(':id')
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Obtener usuario por ID', description: 'Obtiene los datos de un usuario específico' })
+  @ApiParam({ name: 'id', description: 'ID del usuario', type: String })
+  @ApiResponse({
+    status: 200,
+    description: 'Usuario encontrado',
+  })
+  @ApiResponse({ status: 404, description: 'Usuario no encontrado' })
   async findOne(@Param('id') id: string) {
     try {
       const user = await this.getUserUseCase.execute(id);
@@ -75,6 +100,15 @@ export class UsersController {
   @UseGuards(RolesGuard)
   @Roles(UserRole.ADMIN)
   @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({ summary: 'Crear usuario', description: 'Crea un nuevo usuario (solo ADMIN)' })
+  @ApiBody({ type: CreateUserDto })
+  @ApiResponse({
+    status: 201,
+    description: 'Usuario creado exitosamente',
+  })
+  @ApiResponse({ status: 400, description: 'Datos inválidos' })
+  @ApiResponse({ status: 409, description: 'El usuario ya existe' })
+  @ApiResponse({ status: 403, description: 'No autorizado (solo ADMIN)' })
   async create(@Body() dto: CreateUserDto) {
     try {
       const user = await this.createUserUseCase.execute({
