@@ -13,6 +13,7 @@ import { DatabaseModule } from './modules/database/database.module';
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',
+      ignoreEnvFile: process.env.NODE_ENV === 'production',
     }),
     DatabaseModule,
     SharedModule,

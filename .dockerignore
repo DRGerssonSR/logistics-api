@@ -1,0 +1,54 @@
+# .dockerignore
+# Archivos y directorios que NO se copiarán al contexto de Docker
+
+# Dependencias
+node_modules
+npm-debug.log
+yarn-error.log
+yarn.lock
+
+# Build output
+dist
+build
+*.tsbuildinfo
+
+# Archivos de entorno
+.env
+.env.local
+.env.*.local
+.env.production
+.env.development
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Documentación
+README.md
+MVP.md
+*.md
+docs
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# Testing
+coverage
+.nyc_output
+*.log
+test
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Otros
+.eslintcache
+.prettierignore
+eslint.config.mjs
+

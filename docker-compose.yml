@@ -1,0 +1,89 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: logistics-postgres
+    environment:
+      POSTGRES_USER: ${DB_USERNAME:-produser}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-prodpass123}
+      POSTGRES_DB: ${DB_NAME:-logistics_prod}
+    ports:
+      - "${DB_PORT:-5434}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-produser}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - logistics-network
+    restart: unless-stopped
+
+  # MongoDB Database
+  mongodb:
+    image: mongo:7.0
+    container_name: logistics-mongodb
+    environment:
+      MONGO_INITDB_DATABASE: logistics_tracking_prod
+    ports:
+      - "27019:27017"
+    volumes:
+      - mongodb_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - logistics-network
+    restart: unless-stopped
+
+  # NestJS Application
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: logistics-api
+    environment:
+      # PostgreSQL - Lee del .env o usa valores por defecto
+      DB_HOST: ${DB_HOST:-postgres}
+      DB_PORT: ${DB_PORT:-5432}
+      DB_USERNAME: ${DB_USERNAME:-produser}
+      DB_PASSWORD: ${DB_PASSWORD:-prodpass123}
+      DB_NAME: ${DB_NAME:-logistics_prod}
+      DB_SYNCHRONIZE: ${DB_SYNCHRONIZE:-true}
+      DB_LOGGING: ${DB_LOGGING:-false}
+      # MongoDB - Lee del .env o usa valor por defecto
+      MONGODB_URI: ${MONGODB_URI:-mongodb://mongodb:27017/logistics_tracking_prod}
+      # JWT - Lee del .env o usa valor por defecto
+      JWT_SECRET: ${JWT_SECRET:-your-secret-key-change-in-production}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-1d}
+      # App
+      PORT: 3000
+      NODE_ENV: ${NODE_ENV:-production}
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+    networks:
+      - logistics-network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+    driver: local
+  mongodb_data:
+    driver: local
+
+networks:
+  logistics-network:
+    driver: bridge
+
