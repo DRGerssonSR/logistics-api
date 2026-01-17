@@ -71,5 +71,20 @@ export class Package {
       updatedAt: now,
     });
   }
+
+  update(partialProps: Partial<Omit<PackageProps, 'id' | 'createdAt'>>): Package {
+    return new Package({
+      id: this.id,
+      trackingNumber: this.trackingNumber,
+      userId: this.userId,
+      origin: partialProps.origin ?? this.origin,
+      destination: partialProps.destination ?? this.destination,
+      status: partialProps.status ?? this.status,
+      weight: partialProps.weight ?? this.weight,
+      dimensions: partialProps.dimensions ?? this.dimensions,
+      createdAt: this.createdAt,
+      updatedAt: partialProps.updatedAt ?? new Date(),
+    });
+  }
 }
 
