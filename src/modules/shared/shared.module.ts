@@ -1,5 +1,6 @@
 import { Module, Global } from '@nestjs/common';
 import { UserRepositoryInMemoryAdapter } from '../../infrastructure/persistence/in-memory/user.repository.in-memory.adapter';
+import { PasswordHasherService } from '../../infrastructure/services/password-hasher.service';
 
 @Global()
 @Module({
@@ -8,8 +9,12 @@ import { UserRepositoryInMemoryAdapter } from '../../infrastructure/persistence/
       provide: 'UserRepositoryPort',
       useClass: UserRepositoryInMemoryAdapter,
     },
+    {
+      provide: 'PasswordHasherPort',
+      useClass: PasswordHasherService,
+    },
   ],
-  exports: ['UserRepositoryPort'],
+  exports: ['UserRepositoryPort', 'PasswordHasherPort'],
 })
 export class SharedModule {}
 

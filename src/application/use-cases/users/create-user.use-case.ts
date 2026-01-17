@@ -4,6 +4,7 @@ import { UserRole } from '../../../domain/value-objects/user-role.vo';
 import { UserAlreadyExistsError } from '../../../domain/errors/user-already-exists.error';
 import { InvalidRoleError } from '../../../domain/errors/invalid-role.error';
 import type { UserRepositoryPort } from '../../../domain/ports/output/user.repository.port';
+import type { PasswordHasherPort } from '../../../domain/ports/output/password-hasher.port';
 import type { CreateUserRequest } from '../../dto/users/create-user.request';
 import type { CreateUserResponse } from '../../dto/users/create-user.response';
 import { UserMapper } from '../../mappers/user.mapper';
@@ -13,6 +14,8 @@ export class CreateUserUseCase {
   constructor(
     @Inject('UserRepositoryPort')
     private readonly userRepository: UserRepositoryPort,
+    @Inject('PasswordHasherPort')
+    private readonly passwordHasher: PasswordHasherPort,
   ) {}
 
   async execute(request: CreateUserRequest): Promise<CreateUserResponse> {
@@ -24,9 +27,11 @@ export class CreateUserUseCase {
 
     const role = this.validateAndConvertRole(request.role);
 
+    const hashedPassword = await this.passwordHasher.hash(request.password);
+
     const user = User.create({
       email: request.email,
-      password: request.password,
+      password: hashedPassword,
       name: request.name,
       role,
     });

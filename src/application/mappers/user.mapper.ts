@@ -7,6 +7,7 @@ export interface UserResponse {
   role: string;
   createdAt: Date;
   updatedAt: Date;
+  password: string;
 }
 
 export class UserMapper {
@@ -18,6 +19,7 @@ export class UserMapper {
       role: user.role,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
+      password: user.password,
     };
   }
 

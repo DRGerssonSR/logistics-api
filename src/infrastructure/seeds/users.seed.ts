@@ -2,6 +2,7 @@ import { Injectable, Inject, Logger } from '@nestjs/common';
 import { User } from '../../domain/entities/user.entity';
 import { UserRole } from '../../domain/value-objects/user-role.vo';
 import type { UserRepositoryPort } from '../../domain/ports/output/user.repository.port';
+import type { PasswordHasherPort } from '../../domain/ports/output/password-hasher.port';
 
 @Injectable()
 export class UsersSeed {
@@ -10,6 +11,8 @@ export class UsersSeed {
   constructor(
     @Inject('UserRepositoryPort')
     private readonly userRepository: UserRepositoryPort,
+    @Inject('PasswordHasherPort')
+    private readonly passwordHasher: PasswordHasherPort,
   ) {}
 
   async seed(): Promise<void> {
@@ -33,10 +36,13 @@ export class UsersSeed {
       const adminName =
         process.env.ADMIN_NAME || 'Administrator';
 
+      // Hashear la contraseña antes de crear el usuario
+      const hashedPassword = await this.passwordHasher.hash(adminPassword);
+
       // Crear usuario admin por defecto
       const adminUser = User.create({
         email: adminEmail,
-        password: adminPassword,
+        password: hashedPassword,
         name: adminName,
         role: UserRole.ADMIN,
       });
