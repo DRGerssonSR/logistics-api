@@ -49,33 +49,47 @@
 
 ---
 
+#### Fase 2: Módulo de Paquetes (COMPLETADO)
+
+4. **✅ Como usuario, quiero ver todos los paquetes que tengo registrados para poder hacer seguimiento de mis envíos.**
+   - **Estado:** ✅ Completado
+   - **Endpoints:** `GET /api/packages` (con paginación)
+   - **Funcionalidades:**
+     - Listado paginado de paquetes
+     - USER ve solo sus paquetes
+     - ADMIN ve todos los paquetes
+     - Filtrado por usuario autenticado
+
+5. **✅ Como usuario, quiero registrar un nuevo paquete para que el sistema pueda gestionarlo y rastrearlo hasta la entrega.**
+   - **Estado:** ✅ Completado
+   - **Endpoints:** `POST /api/packages`
+   - **Funcionalidades:**
+     - Creación de paquetes con tracking number único
+     - Validación de usuario existente
+     - Estado inicial PENDING
+     - Dimensiones y peso del paquete
+
+6. **✅ Como usuario o administrador, quiero consultar los datos de un paquete para conocer su estado, origen, destino y propietario.**
+   - **Estado:** ✅ Completado
+   - **Endpoints:** `GET /api/packages/:id`
+   - **Funcionalidades:**
+     - Consulta de paquete por ID
+     - Información completa del paquete
+     - Información del propietario incluida
+     - Validación de autorización (USER solo sus paquetes, ADMIN todos)
+
+7. **✅ Como administrador o sistema automático, quiero actualizar el estado de un paquete (pendiente, en tránsito, entregado) para reflejar su progreso.**
+   - **Estado:** ✅ Completado
+   - **Endpoints:** `PATCH /api/packages/:id/status` (solo ADMIN)
+   - **Funcionalidades:**
+     - Actualización de estado del paquete
+     - Validación de transiciones válidas (PENDING → IN_TRANSIT → DELIVERED)
+     - Prevención de retrocesos y cambios desde DELIVERED
+     - Actualización automática de updatedAt
+
+---
+
 ## 🚧 Historias de Usuario Pendientes
-
-### Fase 2: Módulo de Paquetes (ALTA PRIORIDAD)
-
-#### 4. ⏳ Como usuario, quiero ver todos los paquetes que tengo registrados para poder hacer seguimiento de mis envíos.
-   - **Prioridad:** 🔴 ALTA
-   - **Estado:** ⏳ Pendiente
-   - **Endpoint propuesto:** `GET /api/packages` (con filtro por usuario autenticado)
-   - **Dependencias:** Módulo Packages completo
-
-#### 5. ⏳ Como usuario, quiero registrar un nuevo paquete para que el sistema pueda gestionarlo y rastrearlo hasta la entrega.
-   - **Prioridad:** 🔴 ALTA
-   - **Estado:** ⏳ Pendiente
-   - **Endpoint propuesto:** `POST /api/packages`
-   - **Dependencias:** Entidad Package, Repository SQL
-
-#### 6. ⏳ Como usuario o administrador, quiero consultar los datos de un paquete para conocer su estado, origen, destino y propietario.
-   - **Prioridad:** 🔴 ALTA
-   - **Estado:** ⏳ Pendiente
-   - **Endpoint propuesto:** `GET /api/packages/:id`
-   - **Dependencias:** Módulo Packages
-
-#### 7. ⏳ Como administrador o sistema automático, quiero actualizar el estado de un paquete (pendiente, en tránsito, entregado) para reflejar su progreso.
-   - **Prioridad:** 🟡 MEDIA
-   - **Estado:** ⏳ Pendiente
-   - **Endpoint propuesto:** `PATCH /api/packages/:id/status`
-   - **Dependencias:** Módulo Packages
 
 ---
 
@@ -223,7 +237,7 @@ GET    /api/packages/:id/tracking # Historial completo
 ### Funcionalidades Core
 - [x] Autenticación y autorización
 - [x] Gestión de usuarios
-- [ ] Gestión de paquetes
+- [x] Gestión de paquetes
 - [ ] Sistema de tracking
 - [ ] Consulta de historial
 
