@@ -3,5 +3,6 @@ export interface CreateUserRequest {
   password: string;
   name: string;
   role: string;
+  status?: string;
 }
 

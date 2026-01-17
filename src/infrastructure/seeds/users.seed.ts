@@ -1,6 +1,7 @@
 import { Injectable, Inject, Logger } from '@nestjs/common';
 import { User } from '../../domain/entities/user.entity';
 import { UserRole } from '../../domain/value-objects/user-role.vo';
+import { UserStatus } from '../../domain/value-objects/user-status.vo';
 import type { UserRepositoryPort } from '../../domain/ports/output/user.repository.port';
 import type { PasswordHasherPort } from '../../domain/ports/output/password-hasher.port';
 
@@ -45,6 +46,7 @@ export class UsersSeed {
         password: hashedPassword,
         name: adminName,
         role: UserRole.ADMIN,
+        status: UserStatus.ACTIVE,
       });
 
       await this.userRepository.create(adminUser);

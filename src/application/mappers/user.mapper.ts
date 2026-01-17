@@ -1,10 +1,12 @@
 import { User } from '../../domain/entities/user.entity';
+import { UserStatus } from '../../domain/value-objects/user-status.vo';
 
 export interface UserResponse {
   id: string;
   email: string;
   name: string;
   role: string;
+  status: UserStatus;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -16,6 +18,7 @@ export class UserMapper {
       email: user.email,
       name: user.name,
       role: user.role,
+      status: user.status,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt
     };

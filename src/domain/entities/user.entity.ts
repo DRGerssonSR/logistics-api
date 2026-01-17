@@ -1,4 +1,5 @@
 import { UserRole } from '../value-objects/user-role.vo';
+import { UserStatus } from '../value-objects/user-status.vo';
 
 export interface UserProps {
   id: string;
@@ -6,11 +7,14 @@ export interface UserProps {
   password: string;
   name: string;
   role: UserRole;
+  status: UserStatus;
   createdAt: Date;
   updatedAt: Date;
 }
 
-export type CreateUserProps = Pick<UserProps, 'email' | 'password' | 'name' | 'role'>;
+export type CreateUserProps = Pick<UserProps, 'email' | 'password' | 'name' | 'role'> & {
+  status?: UserStatus;
+};
 
 export class User {
   public readonly id: string;
@@ -18,6 +22,7 @@ export class User {
   public readonly password: string;
   public readonly name: string;
   public readonly role: UserRole;
+  public readonly status: UserStatus;
   public readonly createdAt: Date;
   public readonly updatedAt: Date;
 
@@ -27,6 +32,7 @@ export class User {
     this.password = props.password;
     this.name = props.name;
     this.role = props.role;
+    this.status = props.status;
     this.createdAt = props.createdAt;
     this.updatedAt = props.updatedAt;
   }
@@ -39,6 +45,7 @@ export class User {
       password: props.password,
       name: props.name,
       role: props.role,
+      status: props.status || UserStatus.ACTIVE,
       createdAt: now,
       updatedAt: now,
     });

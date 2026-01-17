@@ -1,8 +1,10 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { User } from '../../../domain/entities/user.entity';
 import { UserRole } from '../../../domain/value-objects/user-role.vo';
+import { UserStatus } from '../../../domain/value-objects/user-status.vo';
 import { UserAlreadyExistsError } from '../../../domain/errors/user-already-exists.error';
 import { InvalidRoleError } from '../../../domain/errors/invalid-role.error';
+import { InvalidStatusError } from '../../../domain/errors/invalid-status.error';
 import type { UserRepositoryPort } from '../../../domain/ports/output/user.repository.port';
 import type { PasswordHasherPort } from '../../../domain/ports/output/password-hasher.port';
 import type { CreateUserRequest } from '../../dto/users/create-user.request';
@@ -26,6 +28,7 @@ export class CreateUserUseCase {
     }
 
     const role = this.validateAndConvertRole(request.role);
+    const status = this.validateAndConvertStatus(request.status);
 
     const hashedPassword = await this.passwordHasher.hash(request.password);
 
@@ -34,6 +37,7 @@ export class CreateUserUseCase {
       password: hashedPassword,
       name: request.name,
       role,
+      status,
     });
 
     const createdUser = await this.userRepository.create(user);
@@ -45,6 +49,20 @@ export class CreateUserUseCase {
       return role as UserRole;
     }
     throw new InvalidRoleError(role);
+  }
+
+  private validateAndConvertStatus(status?: string): UserStatus | undefined {
+    if (!status) {
+      return undefined;
+    }
+    if (
+      status === UserStatus.ACTIVE ||
+      status === UserStatus.INACTIVE ||
+      status === UserStatus.BLOCKED
+    ) {
+      return status as UserStatus;
+    }
+    throw new InvalidStatusError(status);
   }
 }
 

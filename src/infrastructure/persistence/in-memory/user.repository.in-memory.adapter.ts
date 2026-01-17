@@ -22,6 +22,11 @@ export class UserRepositoryInMemoryAdapter implements UserRepositoryPort {
     return user || null;
   }
 
+  async findById(id: string): Promise<User | null> {
+    const user = this.users.get(id);
+    return user || null;
+  }
+
   async findMany(params: PaginationParams): Promise<PaginatedResult<User>> {
     const { page, limit } = params;
     const allUsers = Array.from(this.users.values());
