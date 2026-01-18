@@ -28,6 +28,7 @@ Sistema de gestión logística y seguimiento de paquetes construido con NestJS, 
 - 🔒 **Guards y decoradores** personalizados para autorización
 - ✅ **Validación de datos** con class-validator
 - 🌱 **Seeders** para datos iniciales
+- 🧪 **Suite de tests unitarios** completa (58 tests cubriendo todos los casos de uso)
 
 ## 🛠️ Tecnologías
 
@@ -379,6 +380,107 @@ Desde Swagger puedes:
 4. Haz clic en el botón "Authorize" (arriba a la derecha)
 5. Pega el token en el formato: `Bearer <tu-token>`
 6. Ahora puedes probar todos los endpoints protegidos
+
+## 🧪 Testing
+
+El proyecto incluye una suite completa de tests unitarios para validar la lógica de negocio de los casos de uso.
+
+### Estructura de Tests
+
+Los tests están organizados siguiendo la estructura modular del proyecto:
+
+```
+test/
+├── unit/                          # Tests unitarios
+│   └── modules/
+│       ├── users/
+│       │   └── application/use-cases/
+│       │       ├── create-user.use-case.spec.ts
+│       │       ├── get-user.use-case.spec.ts
+│       │       └── list-users.use-case.spec.ts
+│       ├── auth/
+│       │   └── application/use-cases/
+│       │       └── login.use-case.spec.ts
+│       ├── packages/
+│       │   └── application/use-cases/
+│       │       ├── create-package.use-case.spec.ts
+│       │       ├── get-package.use-case.spec.ts
+│       │       ├── list-packages.use-case.spec.ts
+│       │       └── update-package-status.use-case.spec.ts
+│       └── tracking/
+│           └── application/use-cases/
+│               ├── create-tracking.use-case.spec.ts
+│               └── get-tracking-history.use-case.spec.ts
+├── integration/                   # Tests de integración (próximamente)
+└── e2e/                           # Tests end-to-end
+```
+
+### Cobertura Actual
+
+#### ✅ Unit Tests - Use Cases (10/10)
+
+**Módulo Users (3/3):**
+- ✅ `CreateUserUseCase` - Validación de email único, hash de contraseñas, roles y estados
+- ✅ `GetUserUseCase` - Obtención de usuario por ID, validación de existencia
+- ✅ `ListUsersUseCase` - Listado paginado, filtros y ordenamiento
+
+**Módulo Auth (1/1):**
+- ✅ `LoginUseCase` - Autenticación, validación de credenciales, generación de tokens
+
+**Módulo Packages (4/4):**
+- ✅ `CreatePackageUseCase` - Creación de paquetes, validación de usuario, generación de tracking number
+- ✅ `GetPackageUseCase` - Obtención de paquete, validación de autorización (USER/ADMIN)
+- ✅ `ListPackagesUseCase` - Listado paginado con filtros por rol
+- ✅ `UpdatePackageStatusUseCase` - Actualización de estado, validación de transiciones válidas
+
+**Módulo Tracking (2/2):**
+- ✅ `CreateTrackingUseCase` - Registro de eventos, validación de autorización
+- ✅ `GetTrackingHistoryUseCase` - Historial de tracking, ordenamiento por fecha
+
+**Total: 58 tests unitarios** cubriendo todos los casos de uso principales.
+
+### Ejecutar Tests
+
+```bash
+# Ejecutar todos los tests unitarios
+npm test
+
+# Ejecutar tests en modo watch (desarrollo)
+npm run test:watch
+
+# Ejecutar tests con cobertura
+npm run test:cov
+
+# Ejecutar tests en modo debug
+npm run test:debug
+
+# Ejecutar tests E2E (cuando estén disponibles)
+npm run test:e2e
+
+# Ejecutar todos los tests (unit + E2E)
+npm run test:all
+```
+
+### Configuración de Tests
+
+Los tests unitarios están configurados en `test/jest-unit.json`:
+- **Framework**: Jest con TypeScript
+- **Entorno**: Node.js
+- **Cobertura**: Configurada para reportar métricas de código cubierto
+- **Mocks**: Uso de mocks para repositorios y servicios externos
+
+### Próximos Pasos
+
+- 🔄 **Integration Tests**: Tests de integración para controllers (flujo HTTP completo)
+- 🔄 **E2E Tests**: Tests end-to-end para validar flujos completos de usuario
+
+### Mejores Prácticas Aplicadas
+
+- ✅ **Aislamiento**: Cada test es independiente y no depende de otros
+- ✅ **Mocks**: Uso de mocks para dependencias externas (repositorios, servicios)
+- ✅ **Helpers**: Funciones helper para reducir duplicación de código
+- ✅ **Naming**: Nombres descriptivos que explican qué se está probando
+- ✅ **Arrange-Act-Assert**: Estructura clara en cada test
 
 ## 🤝 Contribución
 
