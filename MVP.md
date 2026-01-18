@@ -191,16 +191,32 @@
 
 ---
 
-### Fase 6: Backups y Mantenimiento (BAJA PRIORIDAD)
+### Fase 6: Backups y Mantenimiento (COMPLETADO)
 
-#### 12. ⏳ Como administrador del sistema, quiero tener un script automatizado que haga copias de seguridad automáticas de las bases de datos para proteger los datos ante fallos.
+#### 12. **✅ Como administrador del sistema, quiero tener un script automatizado que haga copias de seguridad automáticas de las bases de datos para proteger los datos ante fallos.**
    - **Prioridad:** 🟢 BAJA
-   - **Estado:** ⏳ Pendiente
+   - **Estado:** ✅ Completado
    - **Tareas:**
-     - Script de backup para PostgreSQL
-     - Script de backup para MongoDB
-     - Configuración de cron jobs
-   - **Dependencias:** Bases de datos configuradas
+     - ✅ Script de backup para PostgreSQL
+     - ✅ Script de backup para MongoDB
+     - ✅ Script maestro para ejecutar ambos backups
+     - ✅ Script de configuración de cron jobs
+     - ✅ Documentación de uso y restauración
+   - **Detalles de Implementación:**
+     - **Scripts creados:**
+       - `scripts/backup-postgres.sh`: Backup de PostgreSQL usando Docker
+       - `scripts/backup-mongo.sh`: Backup de MongoDB usando Docker
+       - `scripts/backup-all.sh`: Ejecuta ambos backups
+       - `scripts/setup-cron.sh`: Configura cron jobs automáticos
+     - **Características:**
+       - Scripts simples y entendibles
+       - Funcionan directamente con Docker (no requieren herramientas locales)
+       - Comprimen backups automáticamente
+       - Documentación completa de uso y restauración
+     - **Configuración:**
+       - Backups se guardan en `backups/postgres/` y `backups/mongo/`
+       - Carpeta `backups/` agregada al `.gitignore`
+       - Cron configurado para ejecutar backups diarios a las 2:00 AM
 
 ---
 
