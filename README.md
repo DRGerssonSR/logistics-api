@@ -27,7 +27,7 @@ Sistema de gestión logística y seguimiento de paquetes construido con NestJS, 
 - 🏗️ **Arquitectura Hexagonal** (Clean Architecture)
 - 🔒 **Guards y decoradores** personalizados para autorización
 - ✅ **Validación de datos** con class-validator
-- 🌱 **Seeders** para datos iniciales
+- 🌱 **Seeders automáticos** para datos iniciales (usuario admin al iniciar)
 - 🧪 **Suite completa de tests**: Unitarios (10 suites) e Integración (54 tests)
 
 ## 🛠️ Tecnologías
@@ -45,10 +45,12 @@ Sistema de gestión logística y seguimiento de paquetes construido con NestJS, 
 ## 📦 Requisitos Previos
 
 ### Para ejecutar con Docker (Recomendado):
+
 - [Docker](https://docs.docker.com/get-docker/) >= 20.x
 - [Docker Compose](https://docs.docker.com/compose/install/) >= 2.x
 
 ### Para desarrollo local:
+
 - [Node.js](https://nodejs.org/) >= 20.x
 - [npm](https://www.npmjs.com/) >= 10.x
 - [PostgreSQL](https://www.postgresql.org/download/) >= 16.x
@@ -77,12 +79,14 @@ docker compose logs -f app
 ```
 
 **¡Listo!** La API estará disponible en:
+
 - **API**: http://localhost:3000
 - **Swagger Docs**: http://localhost:3000/api/docs
 - **PostgreSQL**: localhost:5434 (mapeo externo)
 - **MongoDB**: localhost:27019 (mapeo externo)
 
 **Credenciales por defecto:**
+
 - Email: `admin@logistics.com`
 - Password: `admin123`
 - Role: `ADMIN`
@@ -114,6 +118,7 @@ docker compose --env-file .env.docker up -d
 Si prefieres ejecutar la aplicación directamente en tu máquina:
 
 #### 1. Instalar dependencias
+
 ```bash
 npm install
 ```
@@ -123,6 +128,7 @@ npm install
 Asegúrate de tener PostgreSQL y MongoDB corriendo localmente.
 
 **PostgreSQL:**
+
 ```bash
 # Crear base de datos
 createdb logistics_db
@@ -133,6 +139,7 @@ CREATE DATABASE logistics_db;
 ```
 
 **MongoDB:**
+
 ```bash
 # MongoDB crea la base automáticamente al usarla
 # Solo asegúrate de que el servicio esté corriendo
@@ -184,33 +191,33 @@ La API estará disponible en http://localhost:3000
 
 ### Autenticación
 
-| Método | Endpoint | Descripción | Autenticación |
-|--------|----------|-------------|---------------|
-| POST | `/api/v1/auth/login` | Iniciar sesión | No |
+| Método | Endpoint             | Descripción    | Autenticación |
+| ------ | -------------------- | -------------- | ------------- |
+| POST   | `/api/v1/auth/login` | Iniciar sesión | No            |
 
 ### Usuarios
 
-| Método | Endpoint | Descripción | Autenticación | Roles |
-|--------|----------|-------------|---------------|-------|
-| GET | `/api/v1/users` | Listar usuarios (paginado) | Sí | Todos |
-| GET | `/api/v1/users/:id` | Obtener usuario por ID | Sí | Todos |
-| POST | `/api/v1/users` | Crear nuevo usuario | Sí | ADMIN |
+| Método | Endpoint            | Descripción                | Autenticación | Roles |
+| ------ | ------------------- | -------------------------- | ------------- | ----- |
+| GET    | `/api/v1/users`     | Listar usuarios (paginado) | Sí            | Todos |
+| GET    | `/api/v1/users/:id` | Obtener usuario por ID     | Sí            | Todos |
+| POST   | `/api/v1/users`     | Crear nuevo usuario        | Sí            | ADMIN |
 
 ### Paquetes
 
-| Método | Endpoint | Descripción | Autenticación | Roles |
-|--------|----------|-------------|---------------|-------|
-| GET | `/api/v1/packages` | Listar paquetes (paginado) | Sí | USER: sus paquetes<br>ADMIN: todos |
-| GET | `/api/v1/packages/:id` | Obtener paquete por ID | Sí | USER: solo suyos<br>ADMIN: todos |
-| POST | `/api/v1/packages` | Crear nuevo paquete | Sí | Todos |
-| PATCH | `/api/v1/packages/:id/status` | Actualizar estado del paquete | Sí | ADMIN |
+| Método | Endpoint                      | Descripción                   | Autenticación | Roles                              |
+| ------ | ----------------------------- | ----------------------------- | ------------- | ---------------------------------- |
+| GET    | `/api/v1/packages`            | Listar paquetes (paginado)    | Sí            | USER: sus paquetes<br>ADMIN: todos |
+| GET    | `/api/v1/packages/:id`        | Obtener paquete por ID        | Sí            | USER: solo suyos<br>ADMIN: todos   |
+| POST   | `/api/v1/packages`            | Crear nuevo paquete           | Sí            | Todos                              |
+| PATCH  | `/api/v1/packages/:id/status` | Actualizar estado del paquete | Sí            | ADMIN                              |
 
 ### Tracking
 
-| Método | Endpoint | Descripción | Autenticación | Roles |
-|--------|----------|-------------|---------------|-------|
-| POST | `/api/v1/packages/:packageId/tracking` | Registrar evento de tracking | Sí | USER: sus paquetes<br>ADMIN: todos |
-| GET | `/api/v1/packages/:packageId/tracking` | Historial de tracking | Sí | USER: sus paquetes<br>ADMIN: todos |
+| Método | Endpoint                               | Descripción                  | Autenticación | Roles                              |
+| ------ | -------------------------------------- | ---------------------------- | ------------- | ---------------------------------- |
+| POST   | `/api/v1/packages/:packageId/tracking` | Registrar evento de tracking | Sí            | USER: sus paquetes<br>ADMIN: todos |
+| GET    | `/api/v1/packages/:packageId/tracking` | Historial de tracking        | Sí            | USER: sus paquetes<br>ADMIN: todos |
 
 ### Ejemplo de uso:
 
@@ -269,22 +276,57 @@ src/
 │   │   │   └── mappers/     # Mappers dominio ↔ dto
 │   │   └── infrastructure/
 │   │       ├── controllers/ # Controladores REST
-│   │       ├── persistence/ # Adaptadores de repositorio (SQL/NoSQL)
+│   │       ├── persistence/ # Adaptadores de repositorio (SQL)
 │   │       └── dto/         # DTOs de infraestructura
 │   ├── users/               # Módulo de usuarios
+│   │   ├── domain/
+│   │   │   ├── entities/    # Entidades de dominio
+│   │   │   ├── value-objects/ # Objetos de valor (roles, estados)
+│   │   │   ├── ports/       # Interfaces de repositorio
+│   │   │   └── errors/      # Errores de dominio
+│   │   ├── application/
+│   │   │   ├── use-cases/   # Casos de uso
+│   │   │   ├── dto/         # DTOs de aplicación
+│   │   │   └── mappers/     # Mappers dominio ↔ dto
+│   │   └── infrastructure/
+│   │       ├── controllers/ # Controladores REST
+│   │       ├── persistence/ # Adaptadores de repositorio (SQL)
+│   │       ├── dto/         # DTOs de infraestructura
+│   │       └── seeds/       # Seeders de usuarios
 │   ├── tracking/            # Módulo de tracking
-│   └── ...
+│   │   ├── domain/
+│   │   │   ├── entities/    # Entidades de dominio
+│   │   │   ├── ports/       # Interfaces de repositorio
+│   │   │   └── errors/      # Errores de dominio
+│   │   ├── application/
+│   │   │   ├── use-cases/   # Casos de uso
+│   │   │   ├── dto/         # DTOs de aplicación
+│   │   │   └── mappers/     # Mappers dominio ↔ dto
+│   │   └── infrastructure/
+│   │       ├── controllers/ # Controladores REST
+│   │       ├── persistence/ # Adaptadores de repositorio (MongoDB)
+│   │       └── dto/         # DTOs de infraestructura
+│   ├── database/            # Módulo de configuración de bases de datos
+│   │   └── database.module.ts  # Configuración TypeORM + Mongoose
+│   └── seeds/               # Módulo de seeders
+│       └── seeds.module.ts  # Orquestación de seeders
 ├── shared/                   # Código compartido entre módulos
-│   ├── domain/              # Dominio compartido (ports comunes)
+│   ├── domain/              # Dominio compartido
+│   │   ├── common/          # Utilidades comunes (paginación, etc.)
+│   │   └── ports/           # Puertos compartidos (PasswordHasher, TokenGenerator)
 │   └── infrastructure/      # Infraestructura compartida
-│       ├── guards/          # Guards de autorización
-│       ├── filters/         # Filtros de excepciones
-│       ├── interceptors/   # Interceptores
-│       └── services/        # Servicios compartidos
-└── app.module.ts            # Módulo raíz de NestJS
+│       ├── guards/          # Guards de autorización (JWT, Roles)
+│       ├── filters/         # Filtros de excepciones (HTTP)
+│       ├── interceptors/    # Interceptores (Response)
+│       ├── decorators/      # Decoradores personalizados (@CurrentUser, @Roles)
+│       ├── interfaces/     # Interfaces compartidas (ApiResponse)
+│       └── services/        # Servicios compartidos (PasswordHasher, TokenGenerator)
+├── app.module.ts            # Módulo raíz de NestJS
+└── main.ts                  # Punto de entrada de la aplicación
 ```
 
 ### Principios aplicados:
+
 - ✅ **Arquitectura Hexagonal**: Separación clara entre dominio, aplicación e infraestructura
 - ✅ **Estructura Vertical Modular**: Cada módulo es autónomo y contiene sus propias capas
 - ✅ **Separación de responsabilidades**: Cada capa tiene su propósito específico
@@ -292,8 +334,11 @@ src/
 - ✅ **Domain-Driven Design**: Entidades y value objects expresivos por módulo
 - ✅ **Ports & Adapters**: Interfaces para desacoplar capas y módulos
 - ✅ **Bounded Contexts**: Cada módulo representa un contexto delimitado del dominio
+- ✅ **Módulo de Base de Datos Centralizado**: Configuración unificada de PostgreSQL y MongoDB
+- ✅ **Sistema de Seeders**: Inicialización automática de datos de prueba al iniciar la aplicación
 
 ### Ventajas de la estructura vertical:
+
 - 🎯 **Mejor encapsulación**: Cada módulo agrupa su lógica relacionada
 - 📈 **Escalabilidad**: Fácil agregar nuevos módulos sin afectar existentes
 - 🔍 **Mantenibilidad**: Código relacionado está junto, fácil de encontrar
@@ -350,12 +395,11 @@ NODE_ENV=development
 
 ### Archivos de configuración disponibles:
 
-| Archivo | Propósito | Puertos | Uso |
-|---------|-----------|---------|-----|
-| `.env.docker` | Docker Compose | 3000, 5434, 27019 | `docker compose --env-file .env.docker up -d` |
-| `.env.example` | Documentación | N/A | Referencia |
-| `.env` (crear) | Desarrollo local | 3002, 5433, 27018 | `npm run start:dev` |
-
+| Archivo        | Propósito        | Puertos           | Uso                                           |
+| -------------- | ---------------- | ----------------- | --------------------------------------------- |
+| `.env.docker`  | Docker Compose   | 3000, 5434, 27019 | `docker compose --env-file .env.docker up -d` |
+| `.env.example` | Documentación    | N/A               | Referencia                                    |
+| `.env` (crear) | Desarrollo local | 3002, 5433, 27018 | `npm run start:dev`                           |
 
 ## 📚 Documentación
 
@@ -367,10 +411,12 @@ La documentación interactiva está disponible en:
 **URL desarrollo local**: http://localhost:3002/api/docs
 
 Desde Swagger puedes:
-- ✅ Ver todos los endpoints disponibles
-- ✅ Probar requests directamente
-- ✅ Ver modelos de datos (DTOs)
-- ✅ Autenticarte con JWT Bearer token
+
+- ✅ Ver todos los endpoints disponibles organizados por tags (auth, users, packages, tracking)
+- ✅ Probar requests directamente desde el navegador
+- ✅ Ver modelos de datos (DTOs) y esquemas de validación
+- ✅ Autenticarte con JWT Bearer token (persistente entre sesiones)
+- ✅ Ver ejemplos de requests y responses
 
 ### Cómo usar Swagger:
 
@@ -434,20 +480,24 @@ test/
 #### ✅ Unit Tests - Use Cases (10/10)
 
 **Módulo Users (3/3):**
+
 - ✅ `CreateUserUseCase` - Validación de email único, hash de contraseñas, roles y estados
 - ✅ `GetUserUseCase` - Obtención de usuario por ID, validación de existencia
 - ✅ `ListUsersUseCase` - Listado paginado, filtros y ordenamiento
 
 **Módulo Auth (1/1):**
+
 - ✅ `LoginUseCase` - Autenticación, validación de credenciales, generación de tokens
 
 **Módulo Packages (4/4):**
+
 - ✅ `CreatePackageUseCase` - Creación de paquetes, validación de usuario, generación de tracking number
 - ✅ `GetPackageUseCase` - Obtención de paquete, validación de autorización (USER/ADMIN)
 - ✅ `ListPackagesUseCase` - Listado paginado con filtros por rol
 - ✅ `UpdatePackageStatusUseCase` - Actualización de estado, validación de transiciones válidas
 
 **Módulo Tracking (2/2):**
+
 - ✅ `CreateTrackingUseCase` - Registro de eventos, validación de autorización
 - ✅ `GetTrackingHistoryUseCase` - Historial de tracking, ordenamiento por fecha
 
@@ -456,20 +506,24 @@ test/
 #### ✅ Integration Tests - Controllers (54 tests)
 
 **UsersController (20 tests):**
+
 - ✅ POST /api/v1/users - Creación de usuarios, validaciones, autorización ADMIN
 - ✅ GET /api/v1/users - Listado paginado, autorización
 - ✅ GET /api/v1/users/:id - Obtención por ID, autorización
 
 **AuthController (8 tests):**
+
 - ✅ POST /api/v1/auth/login - Login exitoso, errores, validaciones de DTOs
 
 **PackagesController (15 tests):**
+
 - ✅ POST /api/v1/packages - Creación de paquetes, validaciones
 - ✅ GET /api/v1/packages - Listado con filtros USER/ADMIN
 - ✅ GET /api/v1/packages/:id - Obtención, autorización por propietario
 - ✅ PATCH /api/v1/packages/:id/status - Actualización de estado (solo ADMIN)
 
 **TrackingController (11 tests):**
+
 - ✅ POST /api/v1/packages/:packageId/tracking - Creación de eventos, autorización
 - ✅ GET /api/v1/packages/:packageId/tracking - Historial de tracking, autorización
 
@@ -502,12 +556,14 @@ npm run test:all           # Ejecutar unit + integration tests
 ### Configuración de Tests
 
 **Tests Unitarios** (`test/jest-unit.json`):
+
 - **Framework**: Jest con TypeScript
 - **Entorno**: Node.js
 - **Cobertura**: Configurada para reportar métricas de código cubierto
 - **Mocks**: Uso de mocks para repositorios y servicios externos
 
 **Tests de Integración** (`test/jest-integration.json`):
+
 - **Framework**: Jest con TypeScript
 - **Entorno**: Node.js con aplicación NestJS completa
 - **Bases de datos**: Docker Compose con PostgreSQL y MongoDB
@@ -516,6 +572,7 @@ npm run test:all           # Ejecutar unit + integration tests
 - **Cobertura**: Endpoints HTTP, autenticación JWT, autorización, validación de DTOs
 
 **Infraestructura de Testing:**
+
 - ✅ `docker-compose.test.yml`: PostgreSQL y MongoDB para tests con tmpfs (mejor rendimiento)
 - ✅ `test/setup/docker-test-setup.ts`: Gestión automatizada de contenedores Docker
 - ✅ `test/setup/integration.setup.ts`: Setup de aplicación NestJS para tests
@@ -525,6 +582,7 @@ npm run test:all           # Ejecutar unit + integration tests
 ### Mejores Prácticas Aplicadas
 
 **Tests Unitarios:**
+
 - ✅ **Aislamiento**: Cada test es independiente y no depende de otros
 - ✅ **Mocks**: Uso de mocks para dependencias externas (repositorios, servicios)
 - ✅ **Helpers**: Funciones helper para reducir duplicación de código
@@ -532,6 +590,7 @@ npm run test:all           # Ejecutar unit + integration tests
 - ✅ **Arrange-Act-Assert**: Estructura clara en cada test
 
 **Tests de Integración:**
+
 - ✅ **Bases de datos aisladas**: Docker Compose con bases de datos dedicadas para tests
 - ✅ **Limpieza automática**: Datos limpiados entre tests para evitar interferencias
 - ✅ **Setup/Teardown global**: Gestión automática de Docker antes y después de todos los tests
@@ -562,7 +621,6 @@ UNLICENSED - Proyecto privado
 **Gersson Enrique Salazar Ramirez**
 
 Desarrollado como parte de un reto técnico de logística y seguimiento de paquetes.
-
 
 ## 🔗 Enlaces Útiles
 

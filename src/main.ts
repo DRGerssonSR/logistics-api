@@ -47,6 +47,7 @@ async function bootstrap() {
     .addTag('auth', 'Endpoints de autenticación')
     .addTag('users', 'Gestión de usuarios')
     .addTag('packages', 'Gestión de paquetes')
+    .addTag('tracking', 'Sistema de tracking y seguimiento')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
