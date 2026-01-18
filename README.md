@@ -28,7 +28,7 @@ Sistema de gestión logística y seguimiento de paquetes construido con NestJS, 
 - 🔒 **Guards y decoradores** personalizados para autorización
 - ✅ **Validación de datos** con class-validator
 - 🌱 **Seeders** para datos iniciales
-- 🧪 **Suite de tests unitarios** completa (58 tests cubriendo todos los casos de uso)
+- 🧪 **Suite completa de tests**: Unitarios (10 suites) e Integración (54 tests)
 
 ## 🛠️ Tecnologías
 
@@ -411,7 +411,21 @@ test/
 │           └── application/use-cases/
 │               ├── create-tracking.use-case.spec.ts
 │               └── get-tracking-history.use-case.spec.ts
-├── integration/                   # Tests de integración (próximamente)
+├── integration/                   # Tests de integración
+│   └── modules/
+│       ├── auth/
+│       │   └── auth.controller.integration.spec.ts
+│       ├── packages/
+│       │   └── packages.controller.integration.spec.ts
+│       ├── tracking/
+│       │   └── tracking.controller.integration.spec.ts
+│       └── users/
+│           └── users.controller.integration.spec.ts
+├── setup/                         # Configuración de tests
+│   ├── docker-test-setup.ts      # Gestión de Docker para tests
+│   ├── integration.setup.ts      # Setup de aplicación para tests
+│   ├── global-setup.ts            # Setup global de Jest
+│   └── global-teardown.ts         # Teardown global de Jest
 └── e2e/                           # Tests end-to-end
 ```
 
@@ -437,50 +451,92 @@ test/
 - ✅ `CreateTrackingUseCase` - Registro de eventos, validación de autorización
 - ✅ `GetTrackingHistoryUseCase` - Historial de tracking, ordenamiento por fecha
 
-**Total: 58 tests unitarios** cubriendo todos los casos de uso principales.
+**Total: 10 suites de tests unitarios** cubriendo todos los casos de uso principales.
+
+#### ✅ Integration Tests - Controllers (54 tests)
+
+**UsersController (20 tests):**
+- ✅ POST /api/v1/users - Creación de usuarios, validaciones, autorización ADMIN
+- ✅ GET /api/v1/users - Listado paginado, autorización
+- ✅ GET /api/v1/users/:id - Obtención por ID, autorización
+
+**AuthController (8 tests):**
+- ✅ POST /api/v1/auth/login - Login exitoso, errores, validaciones de DTOs
+
+**PackagesController (15 tests):**
+- ✅ POST /api/v1/packages - Creación de paquetes, validaciones
+- ✅ GET /api/v1/packages - Listado con filtros USER/ADMIN
+- ✅ GET /api/v1/packages/:id - Obtención, autorización por propietario
+- ✅ PATCH /api/v1/packages/:id/status - Actualización de estado (solo ADMIN)
+
+**TrackingController (11 tests):**
+- ✅ POST /api/v1/packages/:packageId/tracking - Creación de eventos, autorización
+- ✅ GET /api/v1/packages/:packageId/tracking - Historial de tracking, autorización
+
+**Total: 54 tests de integración** cubriendo todos los endpoints principales con autenticación JWT, autorización por roles y validación de DTOs.
 
 ### Ejecutar Tests
 
 ```bash
-# Ejecutar todos los tests unitarios
-npm test
+# Tests Unitarios
+npm test                    # Ejecutar todos los tests unitarios
+npm run test:watch          # Ejecutar en modo watch (desarrollo)
+npm run test:cov            # Ejecutar con cobertura
+npm run test:debug          # Ejecutar en modo debug
 
-# Ejecutar tests en modo watch (desarrollo)
-npm run test:watch
+# Tests de Integración
+npm run test:integration              # Ejecutar todos los tests de integración
+npm run test:integration:watch        # Ejecutar en modo watch
+npm run test:integration:cov          # Ejecutar con cobertura
 
-# Ejecutar tests con cobertura
-npm run test:cov
+# Gestión de Docker para tests
+npm run test:docker:up      # Levantar bases de datos de test (PostgreSQL + MongoDB)
+npm run test:docker:down    # Detener y eliminar bases de datos de test
 
-# Ejecutar tests en modo debug
-npm run test:debug
-
-# Ejecutar tests E2E (cuando estén disponibles)
-npm run test:e2e
-
-# Ejecutar todos los tests (unit + E2E)
-npm run test:all
+# Todos los tests
+npm run test:all           # Ejecutar unit + integration tests
 ```
+
+> **Nota:** Los tests de integración requieren Docker. Se levantan automáticamente las bases de datos de test usando `docker-compose.test.yml`.
 
 ### Configuración de Tests
 
-Los tests unitarios están configurados en `test/jest-unit.json`:
+**Tests Unitarios** (`test/jest-unit.json`):
 - **Framework**: Jest con TypeScript
 - **Entorno**: Node.js
 - **Cobertura**: Configurada para reportar métricas de código cubierto
 - **Mocks**: Uso de mocks para repositorios y servicios externos
 
-### Próximos Pasos
+**Tests de Integración** (`test/jest-integration.json`):
+- **Framework**: Jest con TypeScript
+- **Entorno**: Node.js con aplicación NestJS completa
+- **Bases de datos**: Docker Compose con PostgreSQL y MongoDB
+- **Setup automático**: `globalSetup` y `globalTeardown` para gestión de Docker
+- **Limpieza**: Limpieza automática de datos entre tests
+- **Cobertura**: Endpoints HTTP, autenticación JWT, autorización, validación de DTOs
 
-- 🔄 **Integration Tests**: Tests de integración para controllers (flujo HTTP completo)
-- 🔄 **E2E Tests**: Tests end-to-end para validar flujos completos de usuario
+**Infraestructura de Testing:**
+- ✅ `docker-compose.test.yml`: PostgreSQL y MongoDB para tests con tmpfs (mejor rendimiento)
+- ✅ `test/setup/docker-test-setup.ts`: Gestión automatizada de contenedores Docker
+- ✅ `test/setup/integration.setup.ts`: Setup de aplicación NestJS para tests
+- ✅ `test/setup/global-setup.ts` y `global-teardown.ts`: Gestión global de Docker
+- ✅ Variables de entorno específicas para testing
 
 ### Mejores Prácticas Aplicadas
 
+**Tests Unitarios:**
 - ✅ **Aislamiento**: Cada test es independiente y no depende de otros
 - ✅ **Mocks**: Uso de mocks para dependencias externas (repositorios, servicios)
 - ✅ **Helpers**: Funciones helper para reducir duplicación de código
 - ✅ **Naming**: Nombres descriptivos que explican qué se está probando
 - ✅ **Arrange-Act-Assert**: Estructura clara en cada test
+
+**Tests de Integración:**
+- ✅ **Bases de datos aisladas**: Docker Compose con bases de datos dedicadas para tests
+- ✅ **Limpieza automática**: Datos limpiados entre tests para evitar interferencias
+- ✅ **Setup/Teardown global**: Gestión automática de Docker antes y después de todos los tests
+- ✅ **Autenticación real**: Tests con JWT tokens reales generados por el sistema
+- ✅ **Cobertura completa**: Tests de éxito, errores, validaciones y autorización
 
 ## 🤝 Contribución
 
