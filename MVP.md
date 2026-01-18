@@ -114,7 +114,49 @@
 
 ---
 
-#### Fase 4: Infraestructura y DevOps (COMPLETADO)
+#### Fase 4: Testing y Calidad (COMPLETADO)
+
+11. **✅ Como desarrollador, quiero tener tests unitarios y de integración para asegurar la calidad del código y prevenir regresiones.**
+   - **Estado:** ✅ Completado (Parcial - Unit e Integration completos, E2E pendiente)
+   - **Prioridad:** 🟡 MEDIA
+   - **Tareas:**
+     - ✅ Tests unitarios para todos los use cases
+     - ✅ Tests de integración para todos los controllers
+     - ✅ Infraestructura de testing con Docker Compose
+     - ✅ Setup automatizado de bases de datos de test
+     - ❌ Tests E2E: No incluidos en el MVP (no viables para esta fase)
+   - **Detalles de Implementación:**
+     - **Tests Unitarios (10 suites):**
+       - ✅ Users: CreateUserUseCase, GetUserUseCase, ListUsersUseCase
+       - ✅ Auth: LoginUseCase
+       - ✅ Packages: CreatePackageUseCase, GetPackageUseCase, ListPackagesUseCase, UpdatePackageStatusUseCase
+       - ✅ Tracking: CreateTrackingUseCase, GetTrackingHistoryUseCase
+       - Cobertura: Lógica de negocio, validaciones, manejo de errores
+     - **Tests de Integración (54 tests):**
+       - ✅ UsersController: 20 tests (CRUD completo, autorización, validaciones)
+       - ✅ AuthController: 8 tests (login exitoso, errores, validaciones)
+       - ✅ PackagesController: 15 tests (CRUD, autorización USER/ADMIN, validaciones)
+       - ✅ TrackingController: 11 tests (creación eventos, historial, autorización)
+       - Cobertura: Endpoints HTTP, autenticación JWT, autorización por roles, validación de DTOs
+     - **Infraestructura de Testing:**
+       - ✅ `docker-compose.test.yml`: PostgreSQL y MongoDB para tests
+       - ✅ `test/setup/docker-test-setup.ts`: Gestión automatizada de contenedores
+       - ✅ `test/setup/integration.setup.ts`: Setup de aplicación NestJS para tests
+       - ✅ `test/setup/global-setup.ts` y `global-teardown.ts`: Gestión global de Docker
+       - ✅ `test/jest-integration.json`: Configuración Jest para tests de integración
+       - ✅ Limpieza automática de datos entre tests
+       - ✅ Variables de entorno específicas para testing
+     - **Scripts NPM:**
+       - `npm run test` - Ejecutar tests unitarios
+       - `npm run test:integration` - Ejecutar tests de integración
+       - `npm run test:e2e` - Ejecutar tests E2E (pendiente implementación completa)
+       - `npm run test:all` - Ejecutar todos los tests
+       - `npm run test:docker:up` - Levantar bases de datos de test
+       - `npm run test:docker:down` - Detener bases de datos de test
+
+---
+
+#### Fase 5: Infraestructura y DevOps (COMPLETADO)
 
 10. **✅ Como desarrollador, quiero desplegar la aplicación y las bases de datos en contenedores para facilitar la instalación, pruebas y escalabilidad.**
    - **Estado:** ✅ Completado
@@ -147,9 +189,11 @@
 
 ---
 
-### Fase 5: Backups y Mantenimiento (BAJA PRIORIDAD)
+---
 
-#### 11. ⏳ Como administrador del sistema, quiero tener un script automatizado que haga copias de seguridad automáticas de las bases de datos para proteger los datos ante fallos.
+### Fase 6: Backups y Mantenimiento (BAJA PRIORIDAD)
+
+#### 12. ⏳ Como administrador del sistema, quiero tener un script automatizado que haga copias de seguridad automáticas de las bases de datos para proteger los datos ante fallos.
    - **Prioridad:** 🟢 BAJA
    - **Estado:** ⏳ Pendiente
    - **Tareas:**
@@ -182,9 +226,26 @@
 ### 🟡 Media Prioridad
 
 4. **Tests**
-   - Unit tests para use cases
-   - Integration tests para controllers
-   - E2E tests para flujos completos
+   - ✅ **Unit tests para use cases** - COMPLETADO
+     - ✅ Tests unitarios para todos los use cases de Users (3 tests)
+     - ✅ Tests unitarios para todos los use cases de Auth (1 test)
+     - ✅ Tests unitarios para todos los use cases de Packages (4 tests)
+     - ✅ Tests unitarios para todos los use cases de Tracking (2 tests)
+     - **Total:** 10 suites de tests unitarios cubriendo toda la lógica de negocio
+   - ✅ **Integration tests para controllers** - COMPLETADO
+     - ✅ Tests de integración para UsersController (20 tests)
+     - ✅ Tests de integración para AuthController (8 tests)
+     - ✅ Tests de integración para PackagesController (15 tests)
+     - ✅ Tests de integración para TrackingController (11 tests)
+     - **Total:** 54 tests de integración cubriendo todos los endpoints principales
+     - **Infraestructura:**
+       - ✅ Docker Compose para bases de datos de test (PostgreSQL + MongoDB)
+       - ✅ Setup automatizado con globalSetup/globalTeardown
+       - ✅ Limpieza de datos entre tests
+       - ✅ Configuración de Jest para tests de integración
+   - ❌ **E2E tests para flujos completos** - NO INCLUIDO EN MVP
+     - Decisión: No viables para esta fase del MVP
+     - Los tests unitarios e integración cubren suficiente funcionalidad
 
 5. **Documentación**
    - README completo con instalación
@@ -274,7 +335,9 @@ GET    /api/packages/:id/tracking # Historial completo
 - [x] Base de datos NoSQL configurada (MongoDB)
 - [x] Docker y Docker Compose completo (Dockerfile multi-stage + docker-compose con todos los servicios)
 - [x] Swagger/OpenAPI
-- [ ] Tests básicos
+- [x] Tests unitarios (10 suites de use cases)
+- [x] Tests de integración (54 tests para todos los controllers)
+- [x] Infraestructura de testing (Docker Compose para tests, setup automatizado)
 - [ ] Documentación completa
 
 ---
